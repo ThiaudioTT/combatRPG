@@ -1,6 +1,36 @@
 import time
+import json
+import os
+
 
 def attack():
+    # currPath = os.getcwd()
+    # print("Current path: ", currPath)
+
+    # TODO: verify if this path will chagne when the app is deployed
+    with open('src/db.json', 'r') as db:
+        data = json.load(db)
+        # print(data)
+        # print("!!!!!!!!!!!!!!!!!!!!!", data['players'][0]['name'])
+    
+    print("\nSelect the attacker:\n")
+
+    LEN_PLAYERS = len(data['players'])
+
+    print("PLAYER LIST: ")
+    for i in range(LEN_PLAYERS):
+        print(i + 1 , "-", data['players'][i]['name'])
+        time.sleep(1)
+    
+    print("\nENEMIES LIST: ")
+    for i in range(len(data['enemies'])):
+        print(i + 1 + LEN_PLAYERS, "-", data['enemies'][i]['name'])
+        time.sleep(1)
+    
+
+
+    # Close file
+    db.close()
     return 0
 
 
@@ -42,6 +72,8 @@ def main():
         else:
             display_error("\nInvalid option!!\n")
             continue
+
+        time.sleep(2)
 
 main()
 
