@@ -25,6 +25,10 @@ def calcCombat(d20AndMod: int, enemyArmor: int, enemyHp: int) -> int:
 def attack():
     with open(CUR_PATH + '/db.json', 'r') as db:
         data = json.load(db)
+
+    if len(data['players']) == 0 or len(data['enemies']) == 0:
+        display_error(colors.RED + "\nThere are no players or enemies to attack!\n")
+        return 0
     
     print(colors.YELLOW + "\nSelect the attacker and the defender:\n")
 
@@ -35,29 +39,30 @@ def attack():
         print(colors.GREEN + "  ", i + 1 , "-", data['players'][i]['name'], end=" ")
         if data['players'][i]['health'] <= 0: print(colors.RED + "(DEAD 💀)", end="")
         print("")
-        time.sleep(1)
+        time.sleep(0.5)
     
     print(colors.RED + "\n👹 ENEMIES LIST: ")
     for i in range(len(data['enemies'])):
         print("  ", i + 1 + LEN_PLAYERS, "-", data['enemies'][i]['name'], end=" ")
         if data['enemies'][i]['health'] <= 0: print("(DEAD 💀)", end="")
         print("")
-        time.sleep(1)
+        time.sleep(0.5)
     
     print(colors.RESET)
     try:
-        attacker = int(input("\n🔪 Attacker: ")) - 1
-        defender = int(input("🛡️ Defender: ")) - LEN_PLAYERS
+        attackerIdx = int(input("\n🔪 Attacker: ")) - 1
+        # DefenderIdx is defenderIdx > attackerIdx
+        defenderIdx = int(input("🛡️ Defender: ")) - LEN_PLAYERS 
     except ValueError:
         display_error("\nInvalid option!!\n")
         return 0
     
-    if min(attacker, defender) < 0 or max(attacker, defender) >= LEN_PLAYERS + len(data['enemies']):
+    if min(attackerIdx, defenderIdx) < 0 or max(attackerIdx, defenderIdx) >= LEN_PLAYERS + len(data['enemies']):
         display_error("\nInvalid option!!\n")
         return 0
     
-    player_atk = data['players'][attacker] if attacker < LEN_PLAYERS else data['enemies'][attacker - LEN_PLAYERS]
-    player_def = data['players'][defender] if defender < LEN_PLAYERS else data['enemies'][defender - LEN_PLAYERS]
+    player_atk = data['players'][attackerIdx] if attackerIdx < LEN_PLAYERS else data['enemies'][attackerIdx - LEN_PLAYERS]
+    player_def = data['players'][defenderIdx] if defenderIdx < LEN_PLAYERS else data['enemies'][defenderIdx - LEN_PLAYERS - 1]
 
 
     print(colors.YELLOW + "\nℹ️ ", player_atk['name'] + " is attacking " + player_def['name'] + "!")
@@ -74,10 +79,10 @@ def attack():
     defenderHp = calcCombat(dice + modifier, player_def['armor_class'], player_def['health'])
 
     # write into the db
-    if defender < LEN_PLAYERS:
-        data['players'][defender]['health'] = defenderHp
+    if defenderIdx < LEN_PLAYERS:
+        data['players'][defenderIdx]['health'] = defenderHp
     else:
-        data['enemies'][defender - LEN_PLAYERS]['health'] = defenderHp
+        data['enemies'][defenderIdx - LEN_PLAYERS]['health'] = defenderHp
 
     # write into the db
     with open(CUR_PATH + '/db.json', 'w') as db:
