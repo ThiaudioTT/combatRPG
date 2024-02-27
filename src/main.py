@@ -5,7 +5,7 @@ import colors
 
 CUR_PATH = os.path.dirname(os.path.abspath(__file__))
 
-# Se o resultado do ataque for igual ou maior que a CA do alvo, o ataque é bem-sucedido e o dano é determinado.
+# Se o resultado do ataque for igual ou maior que a armadura do alvo, o ataque é bem-sucedido e o dano é determinado.
 # return enemy HP
 def calcCombat(d20AndMod: int, enemyArmor: int, enemyHp: int) -> int:
     # d20AndMod = d20 + modificador and other things
@@ -97,14 +97,15 @@ def display_hp():
     with open(CUR_PATH + '/db.json', 'r') as db:
         data = json.load(db)
     
-    print("\nPlayers: ")
+    print(colors.GREEN + "\n🕹️ Players: ")
     for i in range(len(data['players'])):
-        print(data['players'][i]['name'], " - HP: ", data['players'][i]['health'])
+        print("  ", data['players'][i]['name'], " - HP: ", data['players'][i]['health'])
 
-    print("\nEnemies: ")
+    print(colors.RED + "\n👹 Enemies: ")
     for i in range(len(data['enemies'])):
-        print(data['enemies'][i]['name'], " - HP: ", data['enemies'][i]['health'])
+        print("  ",data['enemies'][i]['name'], " - HP: ", data['enemies'][i]['health'])
     
+    print(colors.YELLOW)
     print("\nPress any key to continue...")
     input()
     return 0
@@ -141,8 +142,9 @@ def display_error(str):
 
 def main():
     print(colors.RED + "⚔️ ⚔️ Welcome to the combatRPG 🛡️ 🛡️ \n" + colors.WHITE + "A cli tool to make the life of a Game Master easier\n" + colors.RESET)
+    time.sleep(3)
     while True:
-        print(colors.RESET + "=" * 20)
+        print(colors.RESET + "=" * 40)
         print("\nSelect an option:")
 
         print("\n1. ⚔️ Attack\n2. 🩹 Display hp of all characters\n3. ☘️ Display atributes of all characters \n0. 👣 Exit \n")
