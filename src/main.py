@@ -109,6 +109,26 @@ def display_hp():
 
 
 def display_atributes():
+    with open('src/db.json', 'r') as db:
+        data = json.load(db)
+
+    print("\nPlayers: ")
+    for i in range(len(data['players'])):
+        for key in data['players'][i]:
+            print(key, ":", data['players'][i][key])
+        time.sleep(1)
+        print("\n")
+    
+    print("\nEnemies: ")
+    for i in range(len(data['enemies'])):
+        for key in data['enemies'][i]:
+            print(key, ":", data['enemies'][i][key])
+        time.sleep(1)
+        print("\n")
+    
+    print("\nPress any key to continue...")
+    input()
+    
     return 0
 
 def display_error(str):
