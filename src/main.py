@@ -92,6 +92,19 @@ def attack():
 
 
 def display_hp():
+    with open('src/db.json', 'r') as db:
+        data = json.load(db)
+    
+    print("\nPlayers: ")
+    for i in range(len(data['players'])):
+        print(data['players'][i]['name'], " - HP: ", data['players'][i]['health'])
+
+    print("\nEnemies: ")
+    for i in range(len(data['enemies'])):
+        print(data['enemies'][i]['name'], " - HP: ", data['enemies'][i]['health'])
+    
+    print("\nPress any key to continue...")
+    input()
     return 0
 
 
