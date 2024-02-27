@@ -52,7 +52,7 @@ def attack():
     try:
         attackerIdx = int(input("\n🔪 Attacker: ")) - 1
         # DefenderIdx is defenderIdx > attackerIdx
-        defenderIdx = int(input("🛡️ Defender: ")) - LEN_PLAYERS 
+        defenderIdx = int(input("🛡️ Defender: ")) - 1
     except ValueError:
         display_error("\nInvalid option!!\n")
         return 0
@@ -62,7 +62,7 @@ def attack():
         return 0
     
     player_atk = data['players'][attackerIdx] if attackerIdx < LEN_PLAYERS else data['enemies'][attackerIdx - LEN_PLAYERS]
-    player_def = data['players'][defenderIdx] if defenderIdx < LEN_PLAYERS else data['enemies'][defenderIdx - LEN_PLAYERS - 1]
+    player_def = data['players'][defenderIdx] if defenderIdx < LEN_PLAYERS else data['enemies'][defenderIdx - LEN_PLAYERS]
 
 
     print(colors.YELLOW + "\nℹ️ ", player_atk['name'] + " is attacking " + player_def['name'] + "!")
@@ -88,8 +88,6 @@ def attack():
     with open(CUR_PATH + '/db.json', 'w') as db:
         json.dump(data, db, indent=4)
     
-    # Close file
-    db.close()
     return 0
 
 
