@@ -4,7 +4,7 @@ import os
 
 # Se o resultado do ataque for igual ou maior que a CA do alvo, o ataque é bem-sucedido e o dano é determinado.
 # return enemy HP
-def calcCombat(d20AndMod, enemyArmor, enemyHp):
+def calcCombat(d20AndMod: int, enemyArmor: int, enemyHp: int) -> int:
     # d20AndMod = d20 + modificador and other things
     if d20AndMod >= enemyArmor:
         diff = d20AndMod - enemyArmor
@@ -128,7 +128,7 @@ def display_atributes():
     
     print("\nPress any key to continue...")
     input()
-    
+
     return 0
 
 def display_error(str):
