@@ -2,6 +2,22 @@ import time
 import json
 import os
 
+# Se o resultado do ataque for igual ou maior que a CA do alvo, o ataque é bem-sucedido e o dano é determinado.
+# return enemy HP
+def calcCombat(d20AndMod, enemyArmor, enemyHp):
+    # d20AndMod = d20 + modificador and other things
+    if d20AndMod >= enemyArmor:
+        diff = d20AndMod - enemyArmor
+        enemyHp -= diff
+        print("The attack was successful! The enemy lost ", diff, "HP")
+    else:
+        print("Miss/Block. No damage was done!")
+
+    if enemyHp <= 0: print("The enemy is dead!")
+    
+    time.sleep(2)
+    return enemyHp
+
 
 def attack():
     # currPath = os.getcwd()
@@ -13,7 +29,7 @@ def attack():
         # print(data)
         # print("!!!!!!!!!!!!!!!!!!!!!", data['players'][0]['name'])
     
-    print("\nSelect the attacker:\n")
+    print("\nSelect the attacker and the defender:\n")
 
     LEN_PLAYERS = len(data['players'])
 
@@ -28,7 +44,48 @@ def attack():
         time.sleep(1)
     
 
+    try:
+        attacker = int(input("\nAttacker: ")) - 1
+        defender = int(input("Defender: ")) - LEN_PLAYERS
+    except ValueError:
+        display_error("\nInvalid option!!\n")
+        return 0
+    
+    if min(attacker, defender) < 0 or max(attacker, defender) >= LEN_PLAYERS + len(data['enemies']):
+        display_error("\nInvalid option!!\n")
+        return 0
+    
+    player_atk = data['players'][attacker] if attacker < LEN_PLAYERS else data['enemies'][attacker - LEN_PLAYERS]
+    player_def = data['players'][defender] if defender < LEN_PLAYERS else data['enemies'][defender - LEN_PLAYERS]
 
+
+    print("\nAttacker: ", player_atk['name'])
+    print("Defender: ", player_def['name'])
+    time.sleep(2)
+
+
+    try:
+        print("\nSelect the dice number: ")
+        dice = int(input())
+        print("\nSelect the modifier: ")
+        modifier = int(input())
+    except ValueError:
+        display_error("\nInvalid option!!\n")
+        return 0
+    
+
+    defenderHp = calcCombat(dice + modifier, player_def['armor_class'], player_def['health'])
+
+    # write into the db
+    if defender < LEN_PLAYERS:
+        data['players'][defender]['health'] = defenderHp
+    else:
+        data['enemies'][defender - LEN_PLAYERS]['health'] = defenderHp
+
+    # write into the db
+    with open('src/db.json', 'w') as db:
+        json.dump(data, db, indent=4)
+    
     # Close file
     db.close()
     return 0
