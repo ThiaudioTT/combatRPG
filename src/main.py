@@ -1,6 +1,9 @@
 import time
 import json
 import os
+import colors
+
+CUR_PATH = os.path.dirname(os.path.abspath(__file__))
 
 # Se o resultado do ataque for igual ou maior que a CA do alvo, o ataque é bem-sucedido e o dano é determinado.
 # return enemy HP
@@ -9,44 +12,42 @@ def calcCombat(d20AndMod: int, enemyArmor: int, enemyHp: int) -> int:
     if d20AndMod >= enemyArmor:
         diff = d20AndMod - enemyArmor
         enemyHp -= diff
-        print("The attack was successful! The enemy lost ", diff, "HP")
+        print(colors.RED + "🩸 The attack was successful! The opponent lost", diff, "HP 🩸")
     else:
-        print("Miss/Block. No damage was done!")
+        print(colors.WHITE + "🛡️ 🛡️ Miss/Block. No damage was done! 🛡️ 🛡️")
 
-    if enemyHp <= 0: print("The enemy is dead!")
+    if enemyHp <= 0: print(colors.BLUE + "💀 The opponent is dead! 💀")
     
     time.sleep(2)
     return enemyHp
 
 
 def attack():
-    # currPath = os.getcwd()
-    # print("Current path: ", currPath)
-
-    # TODO: verify if this path will chagne when the app is deployed
-    with open('src/db.json', 'r') as db:
+    with open(CUR_PATH + '/db.json', 'r') as db:
         data = json.load(db)
-        # print(data)
-        # print("!!!!!!!!!!!!!!!!!!!!!", data['players'][0]['name'])
     
-    print("\nSelect the attacker and the defender:\n")
+    print(colors.YELLOW + "\nSelect the attacker and the defender:\n")
 
     LEN_PLAYERS = len(data['players'])
 
-    print("PLAYER LIST: ")
+    print(colors.GREEN + "🕹️ PLAYER LIST: ")
     for i in range(LEN_PLAYERS):
-        print(i + 1 , "-", data['players'][i]['name'])
+        print(colors.GREEN + "  ", i + 1 , "-", data['players'][i]['name'], end=" ")
+        if data['players'][i]['health'] <= 0: print(colors.RED + "(DEAD 💀)", end="")
+        print("")
         time.sleep(1)
     
-    print("\nENEMIES LIST: ")
+    print(colors.RED + "\n👹 ENEMIES LIST: ")
     for i in range(len(data['enemies'])):
-        print(i + 1 + LEN_PLAYERS, "-", data['enemies'][i]['name'])
+        print("  ", i + 1 + LEN_PLAYERS, "-", data['enemies'][i]['name'], end=" ")
+        if data['enemies'][i]['health'] <= 0: print("(DEAD 💀)", end="")
+        print("")
         time.sleep(1)
     
-
+    print(colors.RESET)
     try:
-        attacker = int(input("\nAttacker: ")) - 1
-        defender = int(input("Defender: ")) - LEN_PLAYERS
+        attacker = int(input("\n🔪 Attacker: ")) - 1
+        defender = int(input("🛡️ Defender: ")) - LEN_PLAYERS
     except ValueError:
         display_error("\nInvalid option!!\n")
         return 0
@@ -59,16 +60,12 @@ def attack():
     player_def = data['players'][defender] if defender < LEN_PLAYERS else data['enemies'][defender - LEN_PLAYERS]
 
 
-    print("\nAttacker: ", player_atk['name'])
-    print("Defender: ", player_def['name'])
+    print(colors.YELLOW + "\nℹ️ ", player_atk['name'] + " is attacking " + player_def['name'] + "!")
     time.sleep(2)
 
-
     try:
-        print("\nSelect the dice number: ")
-        dice = int(input())
-        print("\nSelect the modifier: ")
-        modifier = int(input())
+        dice = int(input("\n🎲 Select the dice number: "))
+        modifier = int(input("\n🍀 Select the modifier: "))
     except ValueError:
         display_error("\nInvalid option!!\n")
         return 0
@@ -83,7 +80,7 @@ def attack():
         data['enemies'][defender - LEN_PLAYERS]['health'] = defenderHp
 
     # write into the db
-    with open('src/db.json', 'w') as db:
+    with open(CUR_PATH + '/db.json', 'w') as db:
         json.dump(data, db, indent=4)
     
     # Close file
@@ -92,7 +89,7 @@ def attack():
 
 
 def display_hp():
-    with open('src/db.json', 'r') as db:
+    with open(CUR_PATH + '/db.json', 'r') as db:
         data = json.load(db)
     
     print("\nPlayers: ")
@@ -109,7 +106,7 @@ def display_hp():
 
 
 def display_atributes():
-    with open('src/db.json', 'r') as db:
+    with open(CUR_PATH + '/db.json', 'r') as db:
         data = json.load(db)
 
     print("\nPlayers: ")
@@ -138,12 +135,12 @@ def display_error(str):
 
 
 def main():
-    print("Welcome to the combatRPG\nA cli tool to make the life of a Game Master easier\n")
+    print(colors.RED + "⚔️ ⚔️ Welcome to the combatRPG 🛡️ 🛡️ \n" + colors.WHITE + "A cli tool to make the life of a Game Master easier\n" + colors.RESET)
     while True:
-        print("=" * 20)
+        print(colors.RESET + "=" * 20)
         print("\nSelect an option:")
 
-        print("\n1. Attack\n2. Display hp of all characters\n3. Display atributes of all characters\n0. Exit")
+        print("\n1. ⚔️ Attack\n2. 🩹 Display hp of all characters\n3. ☘️ Display atributes of all characters \n0. 👣 Exit \n")
 
         try:
             option = int(input())
