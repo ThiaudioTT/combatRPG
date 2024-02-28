@@ -27,6 +27,7 @@ def attack():
         data = json.load(db)
 
     if len(data['players']) == 0 or len(data['enemies']) == 0:
+        # If you want to make a PvP, you will need to change this or add one of the players as an enemy
         display_error(colors.RED + "\nThere are no players or enemies to attack!\n")
         return 0
     
@@ -132,6 +133,109 @@ def display_atributes():
 
     return 0
 
+
+# list all characters, helper function
+def listChars(data):
+    for i in range(len(data)):
+        print(i + 1, "-", data[i]['name'], end=" ")
+        time.sleep(0.5)
+    print(colors.RESET)
+
+
+def edit_characters():
+    with open(CUR_PATH + '/db.json', 'r') as db:
+        data = json.load(db)
+
+    print(colors.YELLOW + "\nYou want to add/remove a player or enemy?\n" + colors.RESET)
+
+    try:
+        playerOrEnemy = int(input("1. 🕹️ Player\n2. 👹 Enemy\n0. Back\n\n"))
+    except ValueError:
+        display_error("\nInvalid option!!\n")
+        return 0
+    
+    if playerOrEnemy == 1:
+        print(colors.GREEN + "You selected a player" + colors.RESET)
+    elif playerOrEnemy == 2:
+        print(colors.RED + "You selected an enemy" + colors.RESET)
+    elif playerOrEnemy == 0:
+        return 0
+    else:
+        display_error("\nInvalid option!!\n")
+        return 0
+    
+
+    print(colors.GREEN + "\nYou will REMOVE or ADD?\n" + colors.RESET)
+
+    try:
+        addOrRemove = int(input("1. Add\n2. Remove\n0. Back\n\n"))
+    except ValueError:
+        display_error("\nInvalid option!!\n")
+        return 0
+    
+    if addOrRemove == 1: # add
+        try:
+            name = input("🕹️ Enter the name of the character: ")
+            health = int(input("🩹 Enter the health of the character: "))
+            armor_class = int(input("🛡️ Enter the armor class of the character: "))
+
+            if playerOrEnemy == 1:
+                data['players'].append({"name": name, "health": health, "armor_class": armor_class})
+            else:
+                data['enemies'].append({"name": name, "health": health, "armor_class": armor_class})
+
+            with open(CUR_PATH + '/db.json', 'w') as db:
+                json.dump(data, db, indent=4)
+
+            print(colors.WHITE + "\nCharacter added successfully.\n")
+            return 0
+        except ValueError:
+            display_error("\nThere was an error in this operation, see if you typed correctly: \n")
+            print(ValueError)
+            return 0
+    elif addOrRemove == 2: # remove
+        if playerOrEnemy == 1: listChars(data['players'])
+        else:
+            print(colors.WHITE + "You want to remove ALL enemies? (y/N)" + colors.RESET)
+            if input() == 'y':
+                data['enemies'] = []
+                with open(CUR_PATH + '/db.json', 'w') as db:
+                    json.dump(data, db, indent=4)
+                print(colors.WHITE + "\nAll enemies removed successfully.\n")
+                return 0
+            else:
+                print(colors.RED + "👹 Enemies: " + colors.RESET)
+                listChars(data['enemies'])
+
+        try:
+            idx = int(input("\nEnter the index of the character you want to remove: ")) - 1
+            if playerOrEnemy == 1 and (idx < 0 or idx >= len(data['players'])):
+                display_error("\nInvalid option!!\n")
+                return 0
+            elif idx < 0 or idx >= len(data['enemies']):
+                display_error("\nInvalid option!!\n")
+                return 0
+            
+            if playerOrEnemy == 1: data['players'].pop(idx)
+            else: data['enemies'].pop(idx)
+
+            with open(CUR_PATH + '/db.json', 'w') as db:
+                json.dump(data, db, indent=4)
+
+            print(colors.WHITE + "\nCharacter removed successfully.\n")
+            return 0
+        except ValueError:
+            display_error("\nThere was an error in this operation, see if you typed correctly: \n")
+            print(ValueError)
+            return 0
+    
+    elif addOrRemove == 0:
+        return 0
+    else:
+        display_error("\nInvalid option!!\n")
+        return 0
+
+
 def display_error(str):
     print(str)
     time.sleep(1)
@@ -145,7 +249,7 @@ def main():
         print(colors.RESET + "=" * 40)
         print("\nSelect an option:")
 
-        print("\n1. ⚔️ Attack\n2. 🩹 Display hp of all characters\n3. ☘️ Display atributes of all characters \n0. 👣 Exit \n")
+        print("\n1. ⚔️ Attack\n2. 🩹 Display hp of all characters\n3. ☘️ Display atributes of all characters\n4. ⚙️ Add/Remove players or enemies\n0. 👣 Exit \n")
 
         try:
             option = int(input())
@@ -161,6 +265,8 @@ def main():
             display_hp()
         elif option == 3:
             display_atributes()
+        elif option == 4:
+            edit_characters()
         else:
             display_error("\nInvalid option!!\n")
             continue
