@@ -2,11 +2,13 @@
 
 A cli tool to make the life of the Game Master easier.
 
-<img src="./demo/demo1.png" style="width: 250px;">
+<img src="./demo/demo1.png" style="width: 700px;">
 
-You will need to have a terminal that renders emoji and stuff.
+See [demos](https://github.com/ThiaudioTT/combatRPG/tree/master/demo) for more.
 
 ## Requirements
+
+You will need to have a terminal that renders emoji and stuff.
 
 - Python 3
 - A terminal that renders emoji and supports colors
