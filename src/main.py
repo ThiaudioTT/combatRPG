@@ -249,7 +249,7 @@ def main():
         print(colors.RESET + "=" * 40)
         print("\nSelect an option:")
 
-        print("\n1. ⚔️ Attack\n2. 🩹 Display hp of all characters\n3. ☘️ Display atributes of all characters\n4. ⚙️ Add/Remove players or enemies\n0. 👣 Exit \n")
+        print("\n1. ⚔️ Attack\n2. 🩹 Display HP of all characters\n3. ☘️ Display atributes of all characters\n4. ⚙️ Add/Remove players or enemies\n0. 👣 Exit \n")
 
         try:
             option = int(input())
