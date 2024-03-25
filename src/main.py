@@ -2,6 +2,7 @@ import time
 import json
 import os
 import colors
+import random
 
 CUR_PATH = os.path.dirname(os.path.abspath(__file__))
 
@@ -21,6 +22,63 @@ def calcCombat(d20AndMod: int, enemyArmor: int, enemyHp: int) -> int:
     time.sleep(2)
     return enemyHp
 
+def handleInitMenu():
+    try:
+        print(colors.YELLOW + "\nSelect an option:\n" + colors.RESET)
+        print("1. 🎲 Calculate initiative\n2. 📜 Display initiative list\n0. Back\n")
+        option = int(input())
+    except ValueError:
+        display_error("\nInvalid option!!\n")
+        return 0
+    
+    if option == 1:
+        calc_initiative()
+    elif option == 2:
+        display_initiative()
+    
+    return 0
+
+def calc_initiative():
+    "Calculate the initiative of a turn and puts it in the db"
+    with open(CUR_PATH + '/db.json', 'r') as db:
+        data = json.load(db)
+    
+    namesAndInit = []
+
+    # make initiative objects like: {name: "name", initiative: 0} to namesAndInit
+    for i in range(len(data['players'])):
+        namesAndInit.append({"name": data['players'][i]['name'], "initiative": random.randint(1, 20) + data['players'][i]['initiative']})
+    for i in range(len(data['enemies'])):
+        namesAndInit.append({"name": data['enemies'][i]['name'], "initiative": random.randint(1, 20) + data['enemies'][i]['initiative']})
+    
+    # sort by initiative
+    namesAndInit = sorted(namesAndInit, key=lambda x: x['initiative'], reverse=True)
+
+    # write into the db
+    data['initiatives']['list'] = namesAndInit
+    with open(CUR_PATH + '/db.json', 'w') as db:
+        json.dump(data, db, indent=4)
+    
+    print(colors.YELLOW + "\nInitiative calculated successfully!\n" + colors.RESET)
+    display_initiative()
+    return 0
+
+
+def display_initiative():
+    "Display the initiative of the current turn in order"
+    with open(CUR_PATH + '/db.json', 'r') as db:
+        data = json.load(db)
+
+    print(colors.YELLOW + "\nInitiative list: \n" + colors.BLUE)
+    # sort list by initiative
+    initList = data['initiatives']['list']
+    for i in range(len(initList)):
+        print("  ", initList[i]['name'], " - Initiative: ", initList[i]['initiative'])
+        time.sleep(0.5)
+    
+    print(colors.RESET)
+    print("\nPress any key to continue...")
+    input()
 
 def attack():
     with open(CUR_PATH + '/db.json', 'r') as db:
@@ -178,11 +236,12 @@ def edit_characters():
             name = input("🕹️ Enter the name of the character: ")
             health = int(input("🩹 Enter the health of the character: "))
             armor_class = int(input("🛡️ Enter the armor class of the character: "))
+            initiative = int(input("🎲 Enter the initiative of the character: "))
 
             if playerOrEnemy == 1:
-                data['players'].append({"name": name, "health": health, "armor_class": armor_class})
+                data['players'].append({"name": name, "health": health, "armor_class": armor_class, "initiative": initiative})
             else:
-                data['enemies'].append({"name": name, "health": health, "armor_class": armor_class})
+                data['enemies'].append({"name": name, "health": health, "armor_class": armor_class, "initiative": initiative})
 
             with open(CUR_PATH + '/db.json', 'w') as db:
                 json.dump(data, db, indent=4)
@@ -249,7 +308,7 @@ def main():
         print(colors.RESET + "=" * 40)
         print("\nSelect an option:")
 
-        print("\n1. ⚔️ Attack\n2. 🩹 Display HP of all characters\n3. ☘️ Display atributes of all characters\n4. ⚙️ Add/Remove players or enemies\n0. 👣 Exit \n")
+        print("\n1. ⚔️ Attack\n2. 🩹 Display HP of all characters\n3. ♟️ Initiatives\n4. ☘️ Display atributes of all characters\n5. ⚙️ Add/Remove players or enemies\n0. 👣 Exit \n")
 
         try:
             option = int(input())
@@ -264,8 +323,10 @@ def main():
         elif option == 2:
             display_hp()
         elif option == 3:
-            display_atributes()
+            handleInitMenu()
         elif option == 4:
+            display_atributes()
+        elif option == 5:
             edit_characters()
         else:
             display_error("\nInvalid option!!\n")
