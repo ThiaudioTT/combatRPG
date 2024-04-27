@@ -1,34 +1,61 @@
 {
     "players": [
         {
-            "name": "Player 1",
-            "health": 100,
-            "proficiency": 5,
-            "strength": 5,
-            "dexterity": 5,
-            "constitution": 5,
-            "intelligence": 5,
-            "wisdom": 5,
-            "passive_wisdom": 10,
-            "charisma": 5,
-            "armor_class": 10,
-            "initiative": 0
+            "name": "Juca",
+            "health": 40,
+            "armor_class": 15,
+            "initiative": 5
+        },
+        {
+            "name": "Thiaguin",
+            "health": 40,
+            "armor_class": 14,
+            "initiative": 5
+        },
+        {
+            "name": "Magrin de agl",
+            "health": 15,
+            "armor_class": 16,
+            "initiative": 5
         }
     ],
     "enemies": [
         {
-            "name": "Enemy 1",
-            "health": 100,
-            "proficiency": 5,
-            "strength": 5,
-            "dexterity": 5,
-            "constitution": 5,
-            "intelligence": 5,
-            "wisdom": 5,
-            "passive_wisdom": 10,
-            "charisma": 5,
-            "armor_class": 10,
-            "initiative": 0
+            "name": "Bugbear",
+            "health": 40,
+            "armor_class": 15,
+            "initiative": 10
+        },
+        {
+            "name": "Goblin A",
+            "health": -13,
+            "armor_class": 2,
+            "initiative": 5
         }
-    ]
+    ],
+    "initiatives": {
+        "next": 0,
+        "list": [
+            {
+                "name": "Juca",
+                "initiative": 17
+            },
+            {
+                "name": "Bugbear",
+                "initiative": 15
+            },
+            {
+                "name": "Magrin de agl",
+                "initiative": 14
+            },
+            {
+                "name": "Thiaguin",
+                "initiative": 13
+            },
+            {
+                "name": "Goblin A",
+                "initiative": 13
+            }
+        ]
+    }
 }
